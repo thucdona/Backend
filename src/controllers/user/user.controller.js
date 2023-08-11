@@ -3,7 +3,9 @@ const userModel = require("../../models/user/user.model")
 const bcrypt = require('bcrypt')
 const authMid = require('../../middlewares/auth/auth.mid');
 const variables = require('../../middlewares/variables');
-const sendMail = require('../../middlewares/mail/mail.Send');
+const authMethod = require('../../middlewares/auth/auth.method');
+const Create = require('../../middlewares/create');
+const mail = require('../../middlewares/mail/mail.Send');
 //Chức năng đổi mật khẩu
 const changePass = async (req = request, res = response) => {
 	const userInput_oldpass = req.body.oldpass;
@@ -123,10 +125,80 @@ const changePass = async (req = request, res = response) => {
 
 
 //hàm xử lý sự kiện người dùng quên mật khẩu
+/** Người dùng sẽ nhấn phải gửi một thông báo quên mật khẩu đến máy chủ - máy chủ sẽ yêu cầu người dùng nhập email vào ô => máy chủ tạo ra đoạn mật khẩu mới + mã đổi mật khẩu mới gửi vào email đó. */
 const forgotPass = async (req = request, res = response) => {
+	try {
+		const { email } = req.body;
+		//kiểm tra xem có để trống hay không
+		if (!email) {
+			return res.status(400).json({
+				err: true,
+				msg: "Vui lòng không để trống Email",
+				data: "error_email"
+			})
+		}
+		//tiến hành kiểm tra email có tồn tại trong cơ sở dữ liệu hay chưa
+		const getUserInfo = await userModel.getUserInfo("user_email", email)
+		const userInfo = getUserInfo.data[0]
+		if (!userInfo) {
+			return res.status(400).json({
+				err: true,
+				msg: "Email không tồn tại trong cơ sở dữ liệu",
+				data: "error_email_empty"
+			})
+		}
+
+		console.log(email);
+		//tạo ra một đoạn mã đổi mật khẩu tự động
+		payload = {
+			user_email: email,
+			user_cache: Create.uuid()
+		}
+		//lấy mấy cái lưu ở môi trường
+		const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;//mã bí mật lưu ở server
+		const token = await authMethod.generateToken(payload, accessTokenSecret, '5m')
+		console.log(token);
+		//gửi link đổi mật khẩu đến email người dùng
+		/*const sendMail = await mail.mailSend('okeynhat@gmail.com','Email thay đổi mật khẩu - FahaVietNam','Có vẻ như bạn đã quên mật khẩu của mình và đã gửi cho chúng tôi yêu cầu cấp lại mật khẩu. Nhấn vào liên kết dưới đây để được cấp lại mật khẩu. <a href= "http://localhost/user_resetPass?token='+token+'"> Cấp lại mật khẩu </a>')*/
+		/*if(sendMail)
+		{
+			return res.status(200).json({
+				err: true,
+				msg: "Gửi yêu cầu thành công",
+				data: "ok"
+			})
+		}*/
+	} catch (error) {
+		return res.status(500).json({
+			err: true,
+			msg: "Lỗi máy chủ",
+			data: "500"
+		})
+	}
+
+}
+
+
+const resetPass = async (req = request, res = response) => {
+	const { token } = req.query;
+	console.log(token);
+	//kiểm tra xem token có hợp lệ hay không
+	const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET // lấy mã bí mật lưu trong ENV
+		///xác thực
+	const verified = await authMethod.verifyToken(token, accessTokenSecret)
+	//kiểm tra token còn dùng được hay không
+	if (!verified) {
+		return res.status(500).json({
+			err: true,
+			msg: "Token không tồn tại hoặc bị hết hạn, vui lòng kiểm tra lại",
+			data: "error_tokennotverifed"
+		})
+	}
+	//nếu token tồn tại tiến hàng Reset Lại mật khẩu sau đó gửi về email
 }
 
 module.exports = {
 	changePass,
-	forgotPass
+	forgotPass,
+	resetPass
 }
