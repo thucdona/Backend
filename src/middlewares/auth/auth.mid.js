@@ -65,6 +65,7 @@ const isAuth = async (accessTokenFromHeader) => {
 	}
 }
 
+
 module.exports = {
 	isAuth
 }
