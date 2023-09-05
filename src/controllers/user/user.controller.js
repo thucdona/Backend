@@ -6,6 +6,7 @@ const variables = require('../../middlewares/variables');
 const authMethod = require('../../middlewares/auth/auth.method');
 const Create = require('../../middlewares/create');
 const mail = require('../../middlewares/mail/mail.Send');
+const Logs = require('../../middlewares/logs/server.log');
 //Chức năng đổi mật khẩu
 const changePass = async (req = request, res = response) => {
 	const userInput_oldpass = req.body.oldpass;
@@ -147,8 +148,6 @@ const forgotPass = async (req = request, res = response) => {
 				data: "error_email_empty"
 			})
 		}
-
-		console.log(email);
 		//tạo ra một đoạn mã đổi mật khẩu tự động
 		payload = {
 			user_email: email,
@@ -157,7 +156,6 @@ const forgotPass = async (req = request, res = response) => {
 		//lấy mấy cái lưu ở môi trường
 		const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;//mã bí mật lưu ở server
 		const token = await authMethod.generateToken(payload, accessTokenSecret, '5m')
-		console.log(token);
 		//gửi link đổi mật khẩu đến email người dùng
 		/*const sendMail = await mail.mailSend('okeynhat@gmail.com','Email thay đổi mật khẩu - FahaVietNam','Có vẻ như bạn đã quên mật khẩu của mình và đã gửi cho chúng tôi yêu cầu cấp lại mật khẩu. Nhấn vào liên kết dưới đây để được cấp lại mật khẩu. <a href= "http://localhost/user_resetPass?token='+token+'"> Cấp lại mật khẩu </a>')*/
 		/*if(sendMail)
@@ -168,12 +166,15 @@ const forgotPass = async (req = request, res = response) => {
 				data: "ok"
 			})
 		}*/
+		Logs.writeLogs('FOPS',"Email:"+email);
 	} catch (error) {
 		return res.status(500).json({
 			err: true,
 			msg: "Lỗi máy chủ",
 			data: "500"
 		})
+		
+
 	}
 
 }

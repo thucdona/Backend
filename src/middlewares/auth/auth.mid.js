@@ -59,12 +59,15 @@ const isAuth = async (accessTokenFromHeader) => {
 			msg: "Xác thực thành công",
 			data: userInfo
 		}
+
 		return data_rs;
 	} catch (error) {
 
 	}
 }
+///kiểm tra quyền truy cập//
 
+//có các quyền sau: Cấp 1: 
 
 module.exports = {
 	isAuth
