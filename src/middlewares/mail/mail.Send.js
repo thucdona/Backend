@@ -1,5 +1,5 @@
 
-/**import nodemailer from 'nodemailer'
+//import nodemailer from 'nodemailer'
 const nodemailer = require('nodemailer');
 const { OAuth2Client } = require('google-auth-library'); 
 //cấu hình email
@@ -50,4 +50,4 @@ const mailSend = async (email,subject,body) => {
 
 module.exports = {
   mailSend,
-}*/
+}
