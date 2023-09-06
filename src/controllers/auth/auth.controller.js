@@ -44,7 +44,7 @@ const addUser = async (req = request, res = response) => {
         if (!user_data.user_email) {
             return res.status(400).json({
                 err: true,
-                msg: "Email người dùng đang để trống",
+                msg: "Email người dùng đang để trống!",
                 data: "empty_useremail"
             })
         }
