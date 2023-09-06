@@ -148,6 +148,9 @@ const forgotPass = async (req = request, res = response) => {
 				data: "error_email_empty"
 			})
 		}
+		//Kiểm tra xem thằng user này đã quên mật khẩu mấy lần trong tháng 
+
+		//Nếu vừa quên cách đây không lâu => cấm xài
 		//tạo ra một đoạn mã đổi mật khẩu tự động
 		payload = {
 			user_email: email,
@@ -157,16 +160,16 @@ const forgotPass = async (req = request, res = response) => {
 		const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;//mã bí mật lưu ở server
 		const token = await authMethod.generateToken(payload, accessTokenSecret, '5m')
 		//gửi link đổi mật khẩu đến email người dùng
-		/*const sendMail = await mail.mailSend('okeynhat@gmail.com','Email thay đổi mật khẩu - FahaVietNam','Có vẻ như bạn đã quên mật khẩu của mình và đã gửi cho chúng tôi yêu cầu cấp lại mật khẩu. Nhấn vào liên kết dưới đây để được cấp lại mật khẩu. <a href= "http://localhost/user_resetPass?token='+token+'"> Cấp lại mật khẩu </a>')*/
-		/*if(sendMail)
+		const sendMail = 1//await mail.mailSend('okeynhat@gmail.com','Email thay đổi mật khẩu - FahaVietNam','Có vẻ như bạn đã quên mật khẩu của mình và đã gửi cho chúng tôi yêu cầu cấp lại mật khẩu. Nhấn vào liên kết dưới đây để được cấp lại mật khẩu. <a href= "http://localhost:3001/user/reset_pass?token='+token+'"> Cấp lại mật khẩu </a>')
+		if(sendMail)
 		{
 			return res.status(200).json({
 				err: true,
 				msg: "Gửi yêu cầu thành công",
-				data: "ok"
+				data: token,
 			})
-		}*/
-		Logs.writeLogs('FOPS',"Email:"+email);
+		}
+		//Logs.writeLogs('FOPS',"Email:"+email);
 	} catch (error) {
 		return res.status(500).json({
 			err: true,
@@ -182,10 +185,9 @@ const forgotPass = async (req = request, res = response) => {
 
 const resetPass = async (req = request, res = response) => {
 	const { token } = req.query;
-	console.log(token);
 	//kiểm tra xem token có hợp lệ hay không
 	const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET // lấy mã bí mật lưu trong ENV
-		///xác thực
+	///xác thực
 	const verified = await authMethod.verifyToken(token, accessTokenSecret)
 	//kiểm tra token còn dùng được hay không
 	if (!verified) {
@@ -195,7 +197,18 @@ const resetPass = async (req = request, res = response) => {
 			data: "error_tokennotverifed"
 		})
 	}
+
+	//kiểm tra token đã sử dụng hay chưa
+
 	//nếu token tồn tại tiến hàng Reset Lại mật khẩu sau đó gửi về email
+	const newPass = Math.random().toString(36).slice(-8) + "#N"
+
+	//tạo ra đoạn mã + ngày tháng quên để lưu trữ///
+	return res.status(200).json({
+		err: false,
+		msg: "Đổi mật khẩu thành công",
+		data: newPass
+	})
 }
 
 module.exports = {
