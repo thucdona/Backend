@@ -1,6 +1,6 @@
 //hàm chuyên
 
-/*const fs = require('fs/promises');
+const fs = require('fs/promises');
 
 const writeLogs =  async (logCode, logInfo) => {
   try {
@@ -26,4 +26,4 @@ const writeErrLog =  async (Code, Content) => {
 module.exports ={
     writeLogs,
     writeErrLog
-}*/
+}
