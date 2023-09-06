@@ -7,7 +7,7 @@
     "start": "cross-env NODE_ENV=production node src/app.js",
     "dev": "cross-env NODE_ENV=development nodemon src/app.js",
     "test": "cross-env NODE_ENV=test jest --verbose --silent",
-    "test:watch": "npm run test -- --watch",
+    "test:watch": "npm run test -- --watch"
   },
   "keywords": [],
   "author": "",
@@ -15,7 +15,7 @@
   "devDependencies": {
     "@microsoft/microsoft-graph-types": "^2.35.0",
     "cross-env": "^7.0.3",
-    "nodemon": "^2.0.22",
+    "nodemon": "^2.0.22"
   },
   "dependencies": {
     "@microsoft/microsoft-graph-client": "^3.0.5",
