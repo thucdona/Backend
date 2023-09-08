@@ -1,10 +1,10 @@
 const database = require('../../src/models/dbconnection')
 const Logs =  require('../../src/middlewares/logs/server.log');
 
-const createCatalog = async (catalogData) => {
+const createCatalog = async (cat_name, cat_detail, cat_key) => {
     try {
         return new Promise((resolve, reject) => {
-            const sql = "INSERT INTO `wh_ct`(`ct_name`,`ct_info`, `ct_key`) VALUES ('" + catalogData.ct_name + "','" + catalogData.ct_info + "','" + catalogData.ct_key + "')";
+            const sql = "INSERT INTO `wh_catalogs`(`cat_name`,`cat_detail`, `cat_key`) VALUES ('" + cat_name + "','" + cat_detail + "','" + cat_key + "')";
             database.ConnectDatabase.query(sql, (error, elements) => {
                 if (error) {
                     //viết log khi lỗi
@@ -30,14 +30,14 @@ const createCatalog = async (catalogData) => {
 
 ///lấy thông tin
 
-const getCatalogbyKey = async (ct_key) => {
+const getCatalog = async (key, value) => {
     try {
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM `wh_ct` WHERE `ct_key`='"+ct_key+"';";
+            const sql = "SELECT * FROM `wh_catalogs` WHERE `"+key+"`='"+value+"';";
             database.ConnectDatabase.query(sql, (error, elements) => {
                 if (error) {
                     //viết log khi lỗi
-                    Logs.writeErrLog("SQLDB","Lỗi hàm khi lấy dữ liệu getCatalogbyKey - mô tả:" +error)
+                    Logs.writeErrLog("SQLDB","Lỗi hàm khi lấy dữ liệu getCatalog - mô tả:" +error)
                     return reject({
                         'error':true,
                         data: error
@@ -45,18 +45,18 @@ const getCatalogbyKey = async (ct_key) => {
                 }
                 return resolve({
                     'error': false,
-                    data: elements
+                    data: elements[0]
                 });
             });
         });
     } catch (error) {
         //viết log khi lỗi
-        Logs.writeErrLog("SQLDB","Lỗi hàm getCatalogbyKey - mô tả:" +error)
+        Logs.writeErrLog("SQLDB","Lỗi hàm getCatalog - mô tả:" +error)
         return false;
     }
 }
 
 module.exports={
     createCatalog,
-    getCatalogbyKey
+    getCatalog,
 }

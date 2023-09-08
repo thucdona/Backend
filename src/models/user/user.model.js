@@ -106,9 +106,33 @@ const updateUser = async (key,value,wkey,wvalue) => {
     }
 
 }
+
+
+const getRoleList = async () => {
+    try {
+        return new Promise((resolve, reject) => {
+            const sql = "SELECT * FROM `roles`;";
+            database.ConnectDatabase.query(sql, (error, elements) => {
+                if (error) {
+                    return reject({
+                        'error':true,
+                        data: error
+                    });
+                }
+                return resolve({
+                    'error': false,
+                    data: elements
+                });
+            });
+        });
+    } catch (error) {
+        return false;
+    }
+}
 module.exports = {
     getUsers,
     getUserInfo,
     createUser,
     updateUser,
+    getRoleList,
 }
