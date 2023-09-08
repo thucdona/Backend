@@ -19,7 +19,9 @@ app.use('/auth', authRouter)
 //Tính năng của người dùng (sửa thông tin, đổi pass, lấy thông tin,..)
 const userRouter = require('./routes/user/user.router')
 app.use('/user', userRouter)
-
+//tính năng Catalog của kho
+const whCatRouter = require('../warehouse/routes/catalog.routes');
+app.use('/wh/cat', whCatRouter)
 
 //Quăng ra thông báo khi truy cập link không tồn tại 404
 app.use(function(request, response, next) {
