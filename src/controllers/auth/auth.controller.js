@@ -4,6 +4,8 @@ const variables = require('../../middlewares/variables');
 const authMethod = require('../auth/auth.method');
 const randToken = require('rand-token')
 const Create = require('../../middlewares/create');
+const Logs = require('../../middlewares/logs/server.log');
+const authMid = require('../../middlewares/auth/auth.mid');
 
 /**
  * hàm này dùng để thêm một user mới vào cơ sở dữ liệu
@@ -254,7 +256,8 @@ const loginUser = async (req = request, res = response) => {
                 user_loginid: login_id
             });
         } else {
-            return res.status(500).json({
+            await Logs.writeErrLog('03lou',error)
+        return res.status(500).json({
                 err: false,
                 msg: 'Có lỗi trong quá trình thực thi',
                 data: "err_model"
@@ -263,8 +266,8 @@ const loginUser = async (req = request, res = response) => {
 		
 	}
 	catch (e) {
-        console.log(e);
-		return res.status(500).json({
+		await Logs.writeErrLog('03lou',error)
+        return res.status(500).json({
             err: true,
             msg: "Máy chủ lỗi hàm loginAuth",
             data: e
@@ -274,7 +277,45 @@ const loginUser = async (req = request, res = response) => {
 	
 };
 
+//đăng xuất
+const logoutUser = async (req = request, res = response) => {
+    try {
+        //lấy key trong header
+        const accessTokenFromHeader = req.headers.x_authorization;
+        const isAuth = await authMid.isAuth(accessTokenFromHeader);
+        if (isAuth.err === true) {
+            return res.status(400).json(isAuth)
+        }
+        //thông tin người dùng
+        const user_uuid = isAuth.data.data[0].user_key
+        //Xoá cái phiên đăng nhập đi
+        const newLoginID = Create.uuid();
+        const updateLoginID =  await userModel.updateUser('user_loginid',newLoginID,'user_key',user_uuid)
+        if (updateLoginID.err) {
+            return res.status(400).json({
+                err: true,
+                msg: "Máy chủ lỗi hàm logoutAuth",
+                data: 'err_logout'
+            })
+        }
+        return res.status(200).json({
+            err: false,
+            msg: 'Đăng xuất thành công.',
+            data: "logout_ok"
+        });
+
+    } catch (error) {
+        await Logs.writeErrLog('03lou',error)
+        return res.status(500).json({
+            err: true,
+            msg: "Máy chủ lỗi hàm logoutAuth",
+            data: e
+        })
+    }
+ }
+
 module.exports = {
     addUser,
     loginUser,
+    logoutUser,
 }
