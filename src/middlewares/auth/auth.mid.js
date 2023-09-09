@@ -90,8 +90,7 @@ const isAuth = async (accessTokenFromHeader, authKey) => {
 			}
 			//kiểm tra trong list phân quyền đó có cái quyền đang hỏi hay không
 			const  Rights = Rolefound.role_rights.split(';')
-			const Rightfound = Rights.find(right => right === authKey);
-			console.log(Rightfound);
+			const Rightfound = Rights.find(right => right === authKey || right === 'super_permision');
 			if (!Rightfound) {
 				///nếu có vấn đề trả về lỗi
 				data_rs = {

@@ -1,23 +1,23 @@
 const { request, response } = require("express");
-const catalogModel = require('../models/catalog.model');
+const warehouseModel = require('../models/warehouse.model');
 const Auth = require('../../src/middlewares/auth/auth.mid');
 const logs = require('../../src/middlewares/logs/server.log');
 const Create = require('../../src/middlewares/create');
 const { json } = require("body-parser");
-//tạo mới một danh mục
-const createCat = async (req = request, res = response) => {
+//tạo mới một Nhà kho
+const createWhs = async (req = request, res = response) => {
     try {
         //đọc dữ liệu gửi lên
-        const { cat_name, cat_detail, cat_key } = req.body;
+        const { whs_name, whs_detail, whs_key } = req.body;
         //lấy key trong header
         const accessTokenFromHeader = req.headers.x_authorization;
         //Kiểm tra xem người dùng đăng nhập hay chưa
-        const isAuth = await Auth.isAuth(accessTokenFromHeader, "add_catalog");
+        const isAuth = await Auth.isAuth(accessTokenFromHeader, "add_warehouse");
         if (isAuth.err === true) {
             return res.status(400).json(isAuth)
         }
         //kiểm tra xem có để trống cái nào không
-        if (!{ cat_name, cat_detail, cat_key }) {
+        if (!{ whs_name, whs_detail, whs_key }) {
             return res.status(400).json({
                 err: true,
                 msg: "Vui lòng không để trống dữ liệu",
@@ -26,67 +26,68 @@ const createCat = async (req = request, res = response) => {
         }
 
         //lấy thông tin từ csdl xem đã tồn tại hay chưa
-        const catalogGet = await catalogModel.getCatalog("cat_key", cat_key);
+        const warehouseGet = await warehouseModel.getWarehouse("whs_key", whs_key);
 
-        if (catalogGet.data) {
+        if (warehouseGet.data) {
             return res.status(400).json({
                 err: true,
-                msg: "Mã của danh mục đã tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
+                msg: "Mã của Nhà kho đã tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
                 data: "error_unique_key"
             })
         }
 
-        const catalogGetbyName = await catalogModel.getCatalog("cat_name", cat_name);
-        if (catalogGetbyName.data) {
+        const warehouseGetbyName = await warehouseModel.getWarehouse("whs_name", whs_name);
+        if (warehouseGetbyName.data) {
             return res.status(400).json({
                 err: true,
-                msg: "Tên của danh mục đã tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
+                msg: "Tên của Nhà kho đã tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
                 data: "error_unique_name"
             })
         }
         //nếu chưa tồn tại thì thêm vào CSDL
-        await catalogModel.createCatalog(cat_name, cat_detail, cat_key)
+        await warehouseModel.createWarehouse(whs_name, whs_detail, whs_key)
         //kiểm tra xem trong data đã có hay chưa
-        const checkCat = await catalogModel.getCatalog("cat_key", cat_key);
-        if (!checkCat.data) {
+        const checkWhs = await warehouseModel.getWarehouse("whs_key", whs_key);
+        if (!checkWhs.data) {
+            logs.writeErrLog("02awa", JSON.stringify(error))
             return res.status(500).json({
                 err: true,
-                msg: "Có lỗi trong quá trình thêm dữ liệu - Vui lòng liên hệ quản trị Viên hệ thống để sửa mã lỗi ERRADDCATNULL",
-                data: "ERRADDCATNULL"
+                msg: "Có lỗi trong quá trình thêm dữ liệu - Vui lòng liên hệ quản trị Viên hệ thống để sửa mã lỗi ERRADDWHSNULL",
+                data: "ERRADDWHSNULL"
             })
         }
         return res.status(200).json({
             err: false,
-            msg: "Thêm mới danh mục thành công",
-            data: checkCat.data
+            msg: "Thêm mới Nhà kho thành công",
+            data: checkWhs.data
         })
 
     } catch (error) {
         //thêm log 
-        logs.writeErrLog("01aca", JSON.stringify(error))
+        logs.writeErrLog("02awa", JSON.stringify(error))
         return res.status(500).json({
             err: true,
-            msg: "Có lỗi trong quá trình thêm dữ liệu - Vui lòng liên hệ quản trị Viên hệ thống để sửa mã lỗi ERRADDCAT",
+            msg: "Có lỗi trong quá trình thêm dữ liệu - Vui lòng liên hệ quản trị Viên hệ thống để sửa mã lỗi ERRADDWHS",
             data: error
         })
     }
 }
 
-//chỉnh sửa một danh mục
-const editCat = async (req = request, res = response) => {
+//chỉnh sửa một Nhà kho
+const editWhs = async (req = request, res = response) => {
     try {
         //đọc dữ liệu gửi lên
-        const { cat_name, cat_detail, cat_key, cat_uuid } = req.body;
+        const { whs_name, whs_detail, whs_key, whs_uuid } = req.body;
         //lấy key trong header
         const accessTokenFromHeader = req.headers.x_authorization;
-        const isAuth = await Auth.isAuth(accessTokenFromHeader, "edit_catalog");
+        const isAuth = await Auth.isAuth(accessTokenFromHeader, "edit_warehouse");
         if (isAuth.err === true) {
             return res.status(400).json(isAuth)
         }
         //thông tin người dùng
         const user_uuid = isAuth.data.data[0].user_key
         //kiểm tra xem có để trống cái nào không
-        if (!{ cat_name, cat_detail, cat_key, cat_uuid }) {
+        if (!{ whs_name, whs_detail, whs_key, whs_uuid }) {
             return res.status(400).json({
                 err: true,
                 msg: "Vui lòng không để trống dữ liệu",
@@ -94,16 +95,16 @@ const editCat = async (req = request, res = response) => {
             })
         }
         //kiểm tra xem cái cat đang sửa có đang tồn tại hay không
-        const catalogGetuuid = await catalogModel.getCatalog("cat_uuid", cat_uuid);
+        const warehouseGetuuid = await warehouseModel.getWarehouse("whs_uuid", whs_uuid);
         //nếu đang không tồn tại => trả về lỗi
-        if (!catalogGetuuid.data) {
+        if (!warehouseGetuuid.data) {
             return res.status(400).json({
                 err: true,
-                msg: "Danh mục không tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
+                msg: "Nhà kho không tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
                 data: "error_unique_uuid"
             })
         }
-        const thisCat = catalogGetuuid.data
+        const thisWhs = warehouseGetuuid.data
         //Kiểm tra xem thông tin nào khác thông tin cũ
         /*Cách làm:
             -Tạo Sets chứa keys của 2 object
@@ -112,24 +113,24 @@ const editCat = async (req = request, res = response) => {
             -Kết quả là một Set chứa các keys khác nhau
             -Chuyển về mảng để hiển thị */
         //tạo object cho key chuẩn bị sửa
-        const newCat = {
-            'cat_name': cat_name,
-            'cat_detail': cat_detail,
-            'cat_key': cat_key,
+        const newWhs = {
+            'whs_name': whs_name,
+            'whs_detail': whs_detail,
+            'whs_key': whs_key,
         }
-        //lấy allCat
-        var allCat = await catalogModel.getCatList()
-        allCat = allCat.data;
-        // 1. So sánh thisCat và newCat
+        //lấy allWhs
+        var allWhs = await warehouseModel.getWhsList()
+        allWhs = allWhs.data;
+        // 1. So sánh thisWhs và newWhs
         let diffKeys = [];
-        // Lặp qua các keys trong thisCat
-        Object.keys(thisCat).forEach(key => {
+        // Lặp qua các keys trong thisWhs
+        Object.keys(thisWhs).forEach(key => {
 
-            // Nếu key không tồn tại trong newCat thì bỏ qua
-            if (!newCat[key]) return;
+            // Nếu key không tồn tại trong newWhs thì bỏ qua
+            if (!newWhs[key]) return;
             // So sánh giá trị, nếu khác nhau thêm vào mảng diff
-            if (thisCat[key] !== newCat[key]) {
-                diffKeys.push({ [key]: newCat[key] });
+            if (thisWhs[key] !== newWhs[key]) {
+                diffKeys.push({ [key]: newWhs[key] });
             }
         });
         //nếu không có cái nào thay đổi thì trả về lỗi luôn
@@ -141,8 +142,8 @@ const editCat = async (req = request, res = response) => {
             })
         }
         // Hàm để tìm các giá trị trùng nhau
-        const duplicates = diffKeys.filter(diffKeyItem => allCat.some(allCatItem =>
-            Object.keys(diffKeyItem).every(key => allCatItem[key] === diffKeyItem[key])
+        const duplicates = diffKeys.filter(diffKeyItem => allWhs.some(allWhsItem =>
+            Object.keys(diffKeyItem).every(key => allWhsItem[key] === diffKeyItem[key])
         ));
         //nếu có giá trị trùng nhau
         //trả về lỗi
@@ -164,29 +165,29 @@ const editCat = async (req = request, res = response) => {
         ///gửi vào CSDL
         var _err = false
         Object.keys(diffKeysObject).forEach(async (key) => {
-            var editCat = await catalogModel.editCatalog(key, diffKeysObject[key], cat_uuid)
-            if (editCat.err != true) {
+            var editWhs = await warehouseModel.editWarehouse(key, diffKeysObject[key], whs_uuid)
+            if (editWhs.err != true) {
                 _err = true;
             }
         })
         if (_err === true) {
             return res.status(500).json({
                 err: false,
-                msg: "Có lỗi trong quá trình cập nhật danh mục",
-                data: "edit_cat_err"
+                msg: "Có lỗi trong quá trình cập nhật Nhà kho",
+                data: "edit_whs_err"
             })
         }
         const content = {
-            oldCat: thisCat,
-            updateCat: diffKeysObject
+            oldWhs: thisWhs,
+            updateWhs: diffKeysObject
         }
         //thêm vào file log thông tin cập nhật để sau này còn tra lại
-        logs.writeLogs(user_uuid, "updateCat", content)
+        logs.writeLogs(user_uuid, "updateWhs", content)
         //Trả về OK
         return res.status(200).json({
             err: false,
-            msg: "Chỉnh sửa danh mục thành công",
-            data: "edit_cat_success"
+            msg: "Chỉnh sửa Nhà kho thành công",
+            data: "edit_whs_success"
         })
 
     } catch (error) {
@@ -194,26 +195,26 @@ const editCat = async (req = request, res = response) => {
         logs.writeErrLog("01eca", JSON.stringify(error))
         return res.status(500).json({
             err: true,
-            msg: "Có lỗi trong quá trình thêm dữ liệu - Vui lòng liên hệ quản trị Viên hệ thống để sửa mã lỗi ERRADDCAT",
+            msg: "Có lỗi trong quá trình thêm dữ liệu - Vui lòng liên hệ quản trị Viên hệ thống để sửa mã lỗi ERRADDWHS",
             data: error
         })
     }
 }
 //hàm xoá (thực tế là chỉ ẩn nó đi ;))
-const deleteCat = async (req = request,res = response) => {
+const deleteWhs = async (req = request,res = response) => {
     try {
         //đọc dữ liệu gửi lên
-        const {cat_uuid} = req.body;
+        const {whs_uuid} = req.body;
         //lấy key trong header
         const accessTokenFromHeader = req.headers.x_authorization;
-        const isAuth = await Auth.isAuth(accessTokenFromHeader, "delete_catalog");
+        const isAuth = await Auth.isAuth(accessTokenFromHeader, "delete_warehouse");
         if (isAuth.err === true) {
             return res.status(400).json(isAuth)
         }
         //thông tin người dùng
         const user_uuid = isAuth.data.data[0].user_key
         //kiểm tra xem có để trống cái nào không
-        if (!cat_uuid) {
+        if (!whs_uuid) {
             return res.status(400).json({
                 err: true,
                 msg: "Vui lòng không để trống dữ liệu",
@@ -221,22 +222,22 @@ const deleteCat = async (req = request,res = response) => {
             })
         }
         //kiểm tra xem cái cat đang sửa có đang tồn tại hay không
-        const catalogGetuuid = await catalogModel.getCatalog("cat_uuid", cat_uuid);
+        const warehouseGetuuid = await warehouseModel.getWarehouse("whs_uuid", whs_uuid);
         //nếu đang không tồn tại => trả về lỗi
-        if (!catalogGetuuid.data) {
+        if (!warehouseGetuuid.data) {
             return res.status(400).json({
                 err: true,
-                msg: "Danh mục không tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
+                msg: "Nhà kho không tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
                 data: "error_unique_uuid"
             })
         }
         //lấy thông tin
-        const thisCat = catalogGetuuid.data
+        const thisWhs = warehouseGetuuid.data
         //thêm vào thùng rác
-        logs.RecycleBin(user_uuid,'delcat',thisCat)
+        logs.RecycleBin(user_uuid,'delwhs',thisWhs)
         //xoá khỏi CSDL
-        const deleteCat  =  await catalogModel.deleteCatalog(cat_uuid);
-        if (deleteCat.err) {
+        const deleteWhs  =  await warehouseModel.deleteWarehouse(whs_uuid);
+        if (deleteWhs.err) {
             logs.writeErrLog("01dca", JSON.stringify(error))
             return res.status(500).json({
                 err: true,
@@ -247,8 +248,8 @@ const deleteCat = async (req = request,res = response) => {
         //Trả về OK
         return res.status(200).json({
             err: false,
-            msg: "Xoá danh mục thành công",
-            data: "delete_cat_success"
+            msg: "Xoá Nhà kho thành công",
+            data: "delete_whs_success"
         })
 
     } catch (error) {
@@ -262,7 +263,7 @@ const deleteCat = async (req = request,res = response) => {
 }
 
 module.exports = {
-    createCat,
-    editCat,
-    deleteCat,
+    createWhs,
+    editWhs,
+    deleteWhs,
 }

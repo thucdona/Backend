@@ -1,0 +1,7 @@
+[
+  {
+    "time": "Sun Sep 10 2023 05:25:13 GMT+0700 (Indochina Time)",
+    "errcode": "02awa",
+    "content": "{\"error\":true,\"data\":{\"code\":\"ER_NO_SUCH_TABLE\",\"errno\":1146,\"sqlMessage\":\"Table 'db_app.wh_warehouse' doesn't exist\",\"sqlState\":\"42S02\",\"index\":0,\"sql\":\"SELECT * FROM `wh_warehouse` WHERE `whs_key`='MM';\"}}"
+  }
+]

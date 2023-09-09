@@ -1,9 +1,0 @@
-Fri Sep 08 2023 16:53:08 GMT+0700 (Indochina Time)>>>SQLDB<<<Lỗi hàm khi lấy dữ liệu getCatalog - mô tả:Error: ER_BAD_FIELD_ERROR: Unknown column 'cat_ky' in 'where clause'
-Fri Sep 08 2023 16:53:08 GMT+0700 (Indochina Time)>>>500-ADDCAT<<<Lỗi thêm danh mục mới: {"error":true,"data":{"code":"ER_BAD_FIELD_ERROR","errno":1054,"sqlMessage":"Unknown column 'cat_ky' in 'where clause'","sqlState":"42S22","index":0,"sql":"SELECT * FROM `wh_catalogs` WHERE `cat_ky`='01';"}}
-Fri Sep 08 2023 17:00:09 GMT+0700 (Indochina Time)>>>500-ADDCAT<<<Lỗi thêm danh mục mới: {}
-Fri Sep 08 2023 17:01:25 GMT+0700 (Indochina Time)>>>500-ADDCAT<<<Lỗi thêm danh mục mới: {}
-Fri Sep 08 2023 17:02:11 GMT+0700 (Indochina Time)>>>500-ADDCAT<<<Lỗi thêm danh mục mới: {}
-Fri Sep 08 2023 17:03:04 GMT+0700 (Indochina Time)>>>500-ADDCAT<<<Lỗi thêm danh mục mới: {}
-Fri Sep 08 2023 17:03:31 GMT+0700 (Indochina Time)>>>500-ADDCAT<<<Lỗi thêm danh mục mới: {}
-Fri Sep 08 2023 17:03:51 GMT+0700 (Indochina Time)>>>500-ADDCAT<<<Lỗi thêm danh mục mới: {}
-Fri Sep 08 2023 17:04:39 GMT+0700 (Indochina Time)>>>500-ADDCAT<<<Lỗi thêm danh mục mới: {}
