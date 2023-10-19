@@ -8,8 +8,11 @@ const mailformat = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}
 //mật khẩu từ 8 đến 15 ký tự chứa ít nhất một chữ thường, một chữ in hoa, một chữ số và một ký tự đặc biệt
 const passwordformat = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/;
 
+const sqlInjectRegex = /[\\'";=+*/%()<>%!#]/
+
 module.exports = {
     reunicode,
     mailformat,
-    passwordformat
+    passwordformat,
+    sqlInjectRegex
 }

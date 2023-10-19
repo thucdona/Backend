@@ -26,9 +26,19 @@ app.use('/wh/cat', whCatRouter)
 const whWhsRouter = require('../warehouse/routes/warehouse.routes');
 app.use('/wh/whs', whWhsRouter)
 
+const whCusRouter = require('../warehouse/routes/customer.routes');
+app.use('/wh/cus', whCusRouter)
+
+const whItemRouter = require('../warehouse/routes/item.routes');
+app.use('/wh/item', whItemRouter)
+
+const whManRouter = require('../warehouse/routes/manufactor.routes');
+app.use('/wh/man', whManRouter)
+
+
 //Quăng ra thông báo khi truy cập link không tồn tại 404
 app.use(function(request, response, next) {
-    response.json({err: false, msg:"Lỗi 404"});
+    response.status(404).json({err: true, msg:"Lỗi 404"});
 });
 
 //Khai báo cho đống code chạy cổng nào

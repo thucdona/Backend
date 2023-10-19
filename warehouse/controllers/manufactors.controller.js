@@ -1,29 +1,27 @@
 const { request, response } = require("express");
-const catalogModel = require('../models/catalog.model');
+const manufactorModel = require('../models/manufactor.model');
 const Auth = require('../../src/middlewares/auth/auth.mid');
 const logs = require('../../src/middlewares/logs/server.log');
 const Create = require('../../src/middlewares/create');
 const { json } = require("body-parser");
-const Func = require('../../src/middlewares/functions');
-//tạo mới một danh mục
-const createCat = async (req = request, res = response) => {
+//tạo mới một Nhãn hàng
+const createMan = async (req = request, res = response) => {
     try {
         //đọc dữ liệu gửi lên
-        var { cat_name, cat_detail, cat_key } = req.body;
+        const { man_name, man_detail, man_key } = req.body;
         //lấy key trong header
         const accessTokenFromHeader = req.headers.x_authorization;
         //Kiểm tra xem người dùng đăng nhập hay chưa
-        const isAuth = await Auth.isAuth(accessTokenFromHeader, "add_catalog");
+        const isAuth = await Auth.isAuth(accessTokenFromHeader, "add_manufactor");
         if (isAuth.err === true) {
             return res.status(400).json(isAuth)
         }
+        const user_uuid = isAuth.data.data[0].user_key
         //kiểm tra xem có để trống cái nào không
-        const requiredFields = ['cat_name', 'cat_detail', 'cat_key'];
-        const missingFields = [];
-        requiredFields.forEach(field => {
-            if (!req.body[field]) {
-                missingFields.push(field);
-            }
+        const requiredFields = ['man_name', 'man_detail', 'man_key'];
+        const missingFields = requiredFields.filter(fieldName => {
+            const fieldValue = req.body[fieldName];
+            return !fieldValue;
         });
         if (missingFields.length > 0) {
             return res.status(400).json({
@@ -32,108 +30,106 @@ const createCat = async (req = request, res = response) => {
                 data: missingFields.join(', ')
             });
         }
-        //kiểm tra độ dài
-        const maxStringLength = 130;
-        const fieldsToCheck = ['cat_name', 'cat_detail', 'cat_key'];
-        const invalidFields = fieldsToCheck.filter(fieldName => {
+
+        //Kiểm tra xem dữ liệu nhập vào có dài quá hay không
+        function isStringTooLong(value, maxLength) {
+            return typeof value === 'string' && value.length > maxLength;
+        }
+        const maxLength = 100; // Đặt độ dài tối đa là 100 ký tự
+        const fieldsToCheck = ['man_name', 'man_detail', 'man_key']; // Thay thế bởi danh sách các trường cần kiểm tra
+        const fieldsTooLong = fieldsToCheck.filter(fieldName => {
             const fieldValue = req.body[fieldName];
-            return fieldValue && fieldValue.length > maxStringLength;
+            return isStringTooLong(fieldValue, maxLength);
         });
-        if (invalidFields.length > 0) {
+        if (fieldsTooLong.length > 0) {
             return res.status(400).json({
                 err: true,
-                msg: "Vui lòng không nhập quá 130 ký tự",
-                data: invalidFields
+                msg: "Vui lòng không nhập quá 100 ký tự",
+                data: fieldsTooLong.join(', ')
             });
         }
-        //lấy thông tin từ csdl xem đã tồn tại hay chưa
-        const catalogGet = await catalogModel.getCatalog("cat_key", cat_key);
 
-        if (catalogGet.data) {
+        //lấy thông tin từ csdl xem đã tồn tại hay chưa
+        const manufactorGet = await manufactorModel.getManufactor("man_key", man_key);
+
+        if (manufactorGet.data) {
             return res.status(400).json({
                 err: true,
-                msg: "Mã của danh mục đã tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
+                msg: "Mã của Nhãn hàng đã tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
                 data: "error_unique_key"
             })
         }
 
-        const catalogGetbyName = await catalogModel.getCatalog("cat_name", cat_name);
-        if (catalogGetbyName.data) {
+        const manufactorGetbyName = await manufactorModel.getManufactor("man_name", man_name);
+        if (manufactorGetbyName.data) {
             return res.status(400).json({
                 err: true,
-                msg: "Tên của danh mục đã tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
+                msg: "Tên của Nhãn hàng đã tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
                 data: "error_unique_name"
             })
         }
         //nếu chưa tồn tại thì thêm vào CSDL
-        await catalogModel.createCatalog(cat_name, cat_detail, cat_key)
+        await manufactorModel.createManufactor(man_name, man_detail, man_key)
         //kiểm tra xem trong data đã có hay chưa
-        const checkCat = await catalogModel.getCatalog("cat_key", cat_key);
-        if (!checkCat.data) {
+        const checkMan = await manufactorModel.getManufactor("man_key", man_key);
+        if (!checkMan.data) {
+            logs.writeErrLog("02awa", JSON.stringify(error))
             return res.status(500).json({
                 err: true,
-                msg: "Có lỗi trong quá trình thêm dữ liệu - Vui lòng liên hệ quản trị Viên hệ thống để sửa mã lỗi ERRADDCATNULL",
-                data: "ERRADDCATNULL"
+                msg: "Có lỗi trong quá trình thêm dữ liệu - Vui lòng liên hệ quản trị Viên hệ thống để sửa mã lỗi ERRADDCUSNULL",
+                data: "ERRADDCUSNULL"
             })
         }
         return res.status(200).json({
             err: false,
-            msg: "Thêm mới danh mục thành công",
-            data: checkCat.data
+            msg: "Thêm mới Nhãn hàng thành công",
+            data: checkMan.data
         })
 
     } catch (error) {
         //thêm log 
-        logs.writeErrLog("01aca", JSON.stringify(error))
+        console.log(error);
+        logs.writeErrLog("02amaa", JSON.stringify(error))
         return res.status(500).json({
             err: true,
-            msg: "Có lỗi trong quá trình thêm dữ liệu - Vui lòng liên hệ quản trị Viên hệ thống để sửa mã lỗi ERRADDCAT",
+            msg: "Có lỗi trong quá trình thêm dữ liệu - Vui lòng liên hệ quản trị Viên hệ thống để sửa mã lỗi ERRADDCUS",
             data: error
         })
     }
 }
 
-//chỉnh sửa một danh mục
-const editCat = async (req = request, res = response) => {
+//chỉnh sửa một Nhãn hàng
+const editMan = async (req = request, res = response) => {
     try {
         //đọc dữ liệu gửi lên
-        var { cat_name, cat_detail, cat_key, cat_uuid } = req.body;
-        Func.escapeString({ cat_name, cat_detail, cat_key, cat_uuid })
+        const { man_name, man_detail, man_key, man_uuid } = req.body;
         //lấy key trong header
         const accessTokenFromHeader = req.headers.x_authorization;
-        const isAuth = await Auth.isAuth(accessTokenFromHeader, "edit_catalog");
+        const isAuth = await Auth.isAuth(accessTokenFromHeader, "edit_manufactor");
         if (isAuth.err === true) {
             return res.status(400).json(isAuth)
         }
         //thông tin người dùng
         const user_uuid = isAuth.data.data[0].user_key
         //kiểm tra xem có để trống cái nào không
-        if (!{ cat_name, cat_detail, cat_key, cat_uuid }) {
+        if (!{ man_name, man_detail, man_key, man_uuid }) {
             return res.status(400).json({
                 err: true,
                 msg: "Vui lòng không để trống dữ liệu",
                 data: "error_null"
             })
         }
-
-        if (Func.isStringTooLong({ cat_name, cat_detail, cat_key, cat_uuid }, 150)) {
-            return res.status(400).json({
-                err: true,
-                msg: "Vui lòng không nhập dữ liệu quá dài",
-                data: "error_lenght"
-            })
-        }
         //kiểm tra xem cái cat đang sửa có đang tồn tại hay không
-        const catalogGetuuid = await catalogModel.getCatalog("cat_uuid", cat_uuid);
+        const manufactorGetuuid = await manufactorModel.getManufactor("man_uuid", man_uuid);
         //nếu đang không tồn tại => trả về lỗi
-        if (!catalogGetuuid.data) {
+        if (!manufactorGetuuid.data) {
             return res.status(400).json({
                 err: true,
-                msg: "Danh mục không tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
+                msg: "Nhãn hàng không tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
                 data: "error_unique_uuid"
             })
         }
-        const thisCat = catalogGetuuid.data
+        const thisMan = manufactorGetuuid.data
         //Kiểm tra xem thông tin nào khác thông tin cũ
         /*Cách làm:
             -Tạo Sets chứa keys của 2 object
@@ -142,24 +138,24 @@ const editCat = async (req = request, res = response) => {
             -Kết quả là một Set chứa các keys khác nhau
             -Chuyển về mảng để hiển thị */
         //tạo object cho key chuẩn bị sửa
-        const newCat = {
-            'cat_name': cat_name,
-            'cat_detail': cat_detail,
-            'cat_key': cat_key,
+        const newMan = {
+            'man_name': man_name,
+            'man_detail': man_detail,
+            'man_key': man_key,
         }
-        //lấy allCat
-        var allCat = await catalogModel.getCatList()
-        allCat = allCat.data;
-        // 1. So sánh thisCat và newCat
+        //lấy allMan
+        var allMan = await manufactorModel.getManList()
+        allMan = allMan.data;
+        // 1. So sánh thisMan và newMan
         let diffKeys = [];
-        // Lặp qua các keys trong thisCat
-        Object.keys(thisCat).forEach(key => {
+        // Lặp qua các keys trong thisMan
+        Object.keys(thisMan).forEach(key => {
 
-            // Nếu key không tồn tại trong newCat thì bỏ qua
-            if (!newCat[key]) return;
+            // Nếu key không tồn tại trong newMan thì bỏ qua
+            if (!newMan[key]) return;
             // So sánh giá trị, nếu khác nhau thêm vào mảng diff
-            if (thisCat[key] !== newCat[key]) {
-                diffKeys.push({ [key]: newCat[key] });
+            if (thisMan[key] !== newMan[key]) {
+                diffKeys.push({ [key]: newMan[key] });
             }
         });
         //nếu không có cái nào thay đổi thì trả về lỗi luôn
@@ -171,8 +167,8 @@ const editCat = async (req = request, res = response) => {
             })
         }
         // Hàm để tìm các giá trị trùng nhau
-        const duplicates = diffKeys.filter(diffKeyItem => allCat.some(allCatItem =>
-            Object.keys(diffKeyItem).every(key => allCatItem[key] === diffKeyItem[key])
+        const duplicates = diffKeys.filter(diffKeyItem => allMan.some(allManItem =>
+            Object.keys(diffKeyItem).every(key => allManItem[key] === diffKeyItem[key])
         ));
         //nếu có giá trị trùng nhau
         //trả về lỗi
@@ -194,56 +190,57 @@ const editCat = async (req = request, res = response) => {
         ///gửi vào CSDL
         var _err = false
         Object.keys(diffKeysObject).forEach(async (key) => {
-            var editCat = await catalogModel.editCatalog(key, diffKeysObject[key], cat_uuid)
-            if (editCat.err != true) {
+            var editMan = await manufactorModel.editManufactor(key, diffKeysObject[key], man_uuid)
+            if (editMan.err != true) {
                 _err = true;
             }
         })
         if (_err === true) {
             return res.status(500).json({
                 err: false,
-                msg: "Có lỗi trong quá trình cập nhật danh mục",
-                data: "edit_cat_err"
+                msg: "Có lỗi trong quá trình cập nhật Nhãn hàng",
+                data: "edit_man_err"
             })
         }
         const content = {
-            oldCat: thisCat,
-            updateCat: diffKeysObject
+            oldMan: thisMan,
+            updateMan: diffKeysObject
         }
         //thêm vào file log thông tin cập nhật để sau này còn tra lại
-        logs.writeLogs(user_uuid, "updateCat", content)
+        logs.writeLogs(user_uuid, "updateMan", content)
         //Trả về OK
         return res.status(200).json({
             err: false,
-            msg: "Chỉnh sửa danh mục thành công",
-            data: "edit_cat_success"
+            msg: "Chỉnh sửa Nhãn hàng thành công",
+            data: "edit_man_success"
         })
 
     } catch (error) {
         //thêm log 
+        console.log(error);
         logs.writeErrLog("01eca", JSON.stringify(error))
         return res.status(500).json({
             err: true,
-            msg: "Có lỗi trong quá trình thêm dữ liệu - Vui lòng liên hệ quản trị Viên hệ thống để sửa mã lỗi ERRADDCAT",
-            data: error
+            msg: "Có lỗi trong quá trình thêm dữ liệu - Vui lòng liên hệ quản trị Viên hệ thống để sửa mã lỗi ERRADDCUS",
+            data: JSON.stringify(error)
         })
     }
 }
 //hàm xoá (thực tế là chỉ ẩn nó đi ;))
-const deleteCat = async (req = request, res = response) => {
+const deleteMan = async (req = request, res = response) => {
     try {
         //đọc dữ liệu gửi lên
-        const { cat_uuid } = req.body;
+        const { man_uuid } = req.body;
         //lấy key trong header
         const accessTokenFromHeader = req.headers.x_authorization;
-        const isAuth = await Auth.isAuth(accessTokenFromHeader, "delete_catalog");
+        const isAuth = await Auth.isAuth(accessTokenFromHeader, "delete_manufactor");
         if (isAuth.err === true) {
             return res.status(400).json(isAuth)
         }
         //thông tin người dùng
         const user_uuid = isAuth.data.data[0].user_key
         //kiểm tra xem có để trống cái nào không
-        if (!cat_uuid) {
+        if (!man_uuid) {
             return res.status(400).json({
                 err: true,
                 msg: "Vui lòng không để trống dữ liệu",
@@ -251,22 +248,22 @@ const deleteCat = async (req = request, res = response) => {
             })
         }
         //kiểm tra xem cái cat đang sửa có đang tồn tại hay không
-        const catalogGetuuid = await catalogModel.getCatalog("cat_uuid", cat_uuid);
+        const manufactorGetuuid = await manufactorModel.getManufactor("man_uuid", man_uuid);
         //nếu đang không tồn tại => trả về lỗi
-        if (!catalogGetuuid.data) {
+        if (!manufactorGetuuid.data) {
             return res.status(400).json({
                 err: true,
-                msg: "Danh mục không tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
+                msg: "Nhãn hàng không tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
                 data: "error_unique_uuid"
             })
         }
         //lấy thông tin
-        const thisCat = catalogGetuuid.data
+        const thisMan = manufactorGetuuid.data
         //thêm vào thùng rác
-        logs.RecycleBin(user_uuid, 'delcat', thisCat)
+        logs.RecycleBin(user_uuid, 'delman', thisMan)
         //xoá khỏi CSDL
-        const deleteCat = await catalogModel.deleteCatalog(cat_uuid);
-        if (deleteCat.err) {
+        const deleteMan = await manufactorModel.deleteManufactor(man_uuid);
+        if (deleteMan.err) {
             logs.writeErrLog("01dca", JSON.stringify(error))
             return res.status(500).json({
                 err: true,
@@ -277,11 +274,12 @@ const deleteCat = async (req = request, res = response) => {
         //Trả về OK
         return res.status(200).json({
             err: false,
-            msg: "Xoá danh mục thành công",
-            data: "delete_cat_success"
+            msg: "Xoá Nhãn hàng thành công",
+            data: "delete_man_success"
         })
 
     } catch (error) {
+        console.log(err);
         logs.writeErrLog("01dca", JSON.stringify(error))
         return res.status(500).json({
             err: true,
@@ -292,7 +290,7 @@ const deleteCat = async (req = request, res = response) => {
 }
 
 module.exports = {
-    createCat,
-    editCat,
-    deleteCat,
+    createMan,
+    editMan,
+    deleteMan,
 }

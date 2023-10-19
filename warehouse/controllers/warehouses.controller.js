@@ -24,7 +24,7 @@ const createWhs = async (req = request, res = response) => {
                 data: "error_null"
             })
         }
-
+        
         //lấy thông tin từ csdl xem đã tồn tại hay chưa
         const warehouseGet = await warehouseModel.getWarehouse("whs_key", whs_key);
 
