@@ -14,7 +14,7 @@ const createItem = async (req = request, res = response) => {
     //đây là hàm thêm mẫu sản phẩm vào kho, nó không có tác dụng thêm sản phẩm mới vào các khi, nó chỉ thêm phôi sản phẩm nên chỉ cần part và thông tin của sản phẩm => trạng thái sẽ là demo
     try {
         //đọc dữ liệu gửi lên
-        var { item_key, item_name, item_namesub, item_part, item_detail, cat_uuid, item_price, item_note, item_image, man_uuid } = req.body;
+        var { item_key, item_name, item_namesub, item_part, item_sn, item_detail, cat_uuid, item_price, item_note, item_image, man_uuid } = req.body;
         //lấy key trong header
         const accessTokenFromHeader = req.headers.x_authorization;
         //Kiểm tra xem người dùng đăng nhập hay chưa
@@ -24,7 +24,7 @@ const createItem = async (req = request, res = response) => {
         }
         const user_uuid = isAuth.data.data[0].user_key
         //kiểm tra có dữ liệu nào bị bỏ trống hay không
-        const requiredFields = ['item_key', 'item_name', 'item_namesub', 'item_part', 'item_detail', 'cat_uuid', 'item_price', 'item_note', 'item_image', 'man_uuid'];
+        const requiredFields = ['item_key', 'item_name', 'item_namesub', 'item_part','item_sn', 'item_detail', 'cat_uuid', 'item_price', 'item_note', 'item_image', 'man_uuid'];
         const missingFields = [];
         requiredFields.forEach(field => {
             if (!req.body[field]) {
@@ -46,7 +46,7 @@ const createItem = async (req = request, res = response) => {
             Func.isStringTooLong(item_part, 100) ||
             Func.isStringTooLong(cat_uuid, 100) ||
             Func.isStringTooLong(item_price, 100) ||
-            Func.isStringTooLong(item_image, 100) ||
+            Func.isStringTooLong(item_image, 255) ||
             Func.isStringTooLong(man_uuid, 100)) {
             return res.status(400).json({
                 err: true,
@@ -96,7 +96,7 @@ const createItem = async (req = request, res = response) => {
         //có 2 loại sản phẩm 1 là duy nhất tức là part giống nhau và Serial khác nhau, mấy món này công thức add cũng khác nhau - nên quy định hàng này là add new tức là thêm mẫu mã cho sản phẩm nên không cần nhập serial, chỉ cần kiểm xem model có tồn tại hay chưa thôi
 
         //thêm hàng vào csdl
-        const createItem = await itemModel.createItem(item_key, item_name, item_namesub, item_part, item_detail, cat_uuid, item_price, item_note, item_image, man_uuid)
+        const createItem = await itemModel.createItem(item_key, item_name, item_namesub, item_part, item_sn, item_detail, cat_uuid, item_price, item_note, item_image, man_uuid)
         if (createItem.err) {
             return res.status(500).json({
                 err: true,
@@ -342,7 +342,7 @@ const importItem = async (req = request, res = response) => {
         const requiredFields = ['item_uuid', 'item_price', 'item_note', 'item_image', 'item_amount', 'item_serial'];
         checkFields(requiredFields);
 
-        //Kiểm tra sản phẩm tồn tại chưa
+        //Kiểm tra uuid sản phẩm tồn tại chưa (check-F12)
         const itemGetuuid = itemModel.getItem('item_uuid', item_uuid);
         if (!itemGetuuid.data) {
             return res.status(400).json({
@@ -351,16 +351,13 @@ const importItem = async (req = request, res = response) => {
                 data: "error_null_uuid"
             })
         }
+
+        //nếu có tồn tại kiểm tra xem là loại tăng số lượng hay tăng số sản phẩm
         const thisItem = itemGetuuid.data;
-
+        
         //kiểm tra xem user nhập là NULLSN hay SN thường
-        //Đối với Null SN
         if (item_serial === "NULLSN") {
-            //Kiểm tra xem sản phẩm đã có trong kho chuẩn bị nhập chưa
-            //nếu chưa thì tiến hành tạo mới 1 cái
-            if (condition) {
-
-            }
+            //kiểm tra xem sản phẩm đó đã từng nhập trong kho hay chưa
         }
     } catch (error) {
         console.log(error);

@@ -2,14 +2,14 @@ const database = require('../../src/models/dbconnection')
 const Logs = require('../../src/middlewares/logs/server.log');
 const Create = require('../../src/middlewares/create');
 
-const createItem = async (item_key, item_name, item_namesub, item_part, item_detail, cat_uuid, item_price, item_note, item_image, man_uuid) => {
+const createItem = async (item_key, item_name, item_namesub, item_part, item_sn, item_detail, cat_uuid, item_price, item_note, item_image, man_uuid) => {
     try {
         return new Promise((resolve, reject) => {
 
             const item_uuid = Create.uuid(); // tạo uuid
 
-            const sql = "INSERT INTO `wh_items`(`item_uuid`, `item_key`, `item_name`, `item_namesub`, `item_part`, `item_detail`, `cat_uuid`, `item_price`, `item_note`, `item_image`, `item_status`, `item_serial`, `item_amount`, `whs_uuid`, `man_uuid`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'DEMO', 'DEMO', '-1','NULLWHS',?)";
-            database.ConnectDatabase.query(sql, [item_uuid, item_key, item_name, item_namesub, item_part, item_detail, cat_uuid, item_price, item_note, item_image, man_uuid], (error, elements) => {
+            const sql = "INSERT INTO `wh_items`(`item_uuid`, `item_key`, `item_name`, `item_namesub`, `item_part`, `item_serial`,`item_detail`, `cat_uuid`, `item_price`, `item_note`, `item_image`, `item_status`, `item_amount`, `whs_uuid`, `man_uuid`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'DEMO', '-1','NULLWHS',?)";
+            database.ConnectDatabase.query(sql, [item_uuid, item_key, item_name, item_namesub, item_part,item_sn, item_detail, cat_uuid, item_price, item_note, item_image, man_uuid], (error, elements) => {
 
                 if (error) {
                     //viết log khi lỗi 

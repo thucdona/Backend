@@ -303,5 +303,30 @@
         "item_name": "Sản phẩm số 01"
       }
     }
+  },
+  {
+    "time": "Fri Oct 27 2023 01:40:33 GMT+0700 (Giờ Đông Dương)",
+    "user_uuid": "0fb2c987-dc79-488b-a7ff-9c6556d85f91",
+    "action": "addItem",
+    "info": {
+      "id": 3,
+      "item_uuid": "47a5d927-8784-486f-8cc6-cbbd14ab2df9",
+      "item_key": "DM05DM",
+      "item_name": "Sản phẩm tét",
+      "item_namesub": "tên trên hoá đơnd",
+      "item_part": "PARTM6",
+      "item_serial": "NULLSL",
+      "item_detail": "thông tin sản phẩm",
+      "cat_uuid": "9652af7b-862d-4a06-ac8a-ecd034b532bf",
+      "whs_uuid": "NULLWHS",
+      "item_amount": "-1",
+      "item_price": "10000",
+      "item_note": "không có ghi chú",
+      "item_status": "DEMO",
+      "item_image": " ảnh sp",
+      "item_createdate": "",
+      "item_changedate": "",
+      "man_uuid": "4e4dd653-c6e8-4fca-b430-63d436ead8b7"
+    }
   }
 ]

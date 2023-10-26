@@ -68,5 +68,95 @@
     "time": "Tue Sep 12 2023 16:10:21 GMT+0700 (Indochina Time)",
     "errcode": "01eia",
     "content": "{}"
+  },
+  {
+    "time": "Fri Oct 27 2023 01:36:01 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "04ait",
+    "content": {
+      "error": true,
+      "data": {
+        "code": "ER_WRONG_VALUE_COUNT_ON_ROW",
+        "errno": 1136,
+        "sqlMessage": "Column count doesn't match value count at row 1",
+        "sqlState": "21S01",
+        "index": 0,
+        "sql": "INSERT INTO `wh_items`(`item_uuid`, `item_key`, `item_name`, `item_namesub`, `item_part`, `item_sn`,`item_detail`, `cat_uuid`, `item_price`, `item_note`, `item_image`, `item_status`, `item_serial`, `item_amount`, `whs_uuid`, `man_uuid`) VALUES ('8ceb94a2-080e-4d15-8b6c-03b806e87282', 'DM05DM', 'Sản phẩm tét', 'tên trên hoá đơnd', 'PARTM6', 'NULLSL', 'thông tin sản phẩm', '9652af7b-862d-4a06-ac8a-ecd034b532bf', '10000', 'không có ghi chú', 'DEMO', 'DEMO', '-1','NULLWHS',' ảnh sp')"
+      }
+    }
+  },
+  {
+    "time": "Fri Oct 27 2023 01:37:21 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "04ait",
+    "content": {
+      "error": true,
+      "data": {
+        "code": "ER_WRONG_VALUE_COUNT_ON_ROW",
+        "errno": 1136,
+        "sqlMessage": "Column count doesn't match value count at row 1",
+        "sqlState": "21S01",
+        "index": 0,
+        "sql": "INSERT INTO `wh_items`(`item_uuid`, `item_key`, `item_name`, `item_namesub`, `item_part`, `item_sn`,`item_detail`, `cat_uuid`, `item_price`, `item_note`, `item_image`, `item_status`, `item_serial`, `item_amount`, `whs_uuid`, `man_uuid`) VALUES ('0fecf096-e9ee-4b53-bf6b-79f4cb9726a0', 'DM05DM', 'Sản phẩm tét', 'tên trên hoá đơnd', 'PARTM6', 'NULLSL', 'thông tin sản phẩm', '9652af7b-862d-4a06-ac8a-ecd034b532bf', '10000', 'không có ghi chú', 'DEMO', 'DEMO', '-1','NULLWHS',' ảnh sp')"
+      }
+    }
+  },
+  {
+    "time": "Fri Oct 27 2023 01:38:31 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "04ait",
+    "content": {
+      "error": true,
+      "data": {
+        "code": "ER_FIELD_SPECIFIED_TWICE",
+        "errno": 1110,
+        "sqlMessage": "Column 'item_serial' specified twice",
+        "sqlState": "42000",
+        "index": 0,
+        "sql": "INSERT INTO `wh_items`(`item_uuid`, `item_key`, `item_name`, `item_namesub`, `item_part`, `item_serial`,`item_detail`, `cat_uuid`, `item_price`, `item_note`, `item_image`, `item_status`, `item_serial`, `item_amount`, `whs_uuid`, `man_uuid`) VALUES ('dea7a94c-5925-4b1d-99a8-ce07d93615b0', 'DM05DM', 'Sản phẩm tét', 'tên trên hoá đơnd', 'PARTM6', 'NULLSL', 'thông tin sản phẩm', '9652af7b-862d-4a06-ac8a-ecd034b532bf', '10000', 'không có ghi chú', ' ảnh sp', 'DEMO', 'DEMO', '-1','NULLWHS','4e4dd653-c6e8-4fca-b430-63d436ead8b7')"
+      }
+    }
+  },
+  {
+    "time": "Fri Oct 27 2023 01:38:46 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "04ait",
+    "content": {
+      "error": true,
+      "data": {
+        "code": "ER_FIELD_SPECIFIED_TWICE",
+        "errno": 1110,
+        "sqlMessage": "Column 'item_serial' specified twice",
+        "sqlState": "42000",
+        "index": 0,
+        "sql": "INSERT INTO `wh_items`(`item_uuid`, `item_key`, `item_name`, `item_namesub`, `item_part`, `item_serial`,`item_detail`, `cat_uuid`, `item_price`, `item_note`, `item_image`, `item_status`, `item_serial`, `item_amount`, `whs_uuid`, `man_uuid`) VALUES ('7dc686da-89c6-475d-a6e5-05a99576308b', 'DM05DM', 'Sản phẩm tét', 'tên trên hoá đơnd', 'PARTM6', 'NULLSL', 'thông tin sản phẩm', '9652af7b-862d-4a06-ac8a-ecd034b532bf', '10000', 'không có ghi chú', ' ảnh sp', 'DEMO', 'DEMO', '-1','NULLWHS','4e4dd653-c6e8-4fca-b430-63d436ead8b7')"
+      }
+    }
+  },
+  {
+    "time": "Fri Oct 27 2023 01:38:50 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "04ait",
+    "content": {
+      "error": true,
+      "data": {
+        "code": "ER_FIELD_SPECIFIED_TWICE",
+        "errno": 1110,
+        "sqlMessage": "Column 'item_serial' specified twice",
+        "sqlState": "42000",
+        "index": 0,
+        "sql": "INSERT INTO `wh_items`(`item_uuid`, `item_key`, `item_name`, `item_namesub`, `item_part`, `item_serial`,`item_detail`, `cat_uuid`, `item_price`, `item_note`, `item_image`, `item_status`, `item_serial`, `item_amount`, `whs_uuid`, `man_uuid`) VALUES ('a81d6785-197d-4619-85d5-407fa5ce37d5', 'DM05DM', 'Sản phẩm tét', 'tên trên hoá đơnd', 'PARTM6', 'NULLSL', 'thông tin sản phẩm', '9652af7b-862d-4a06-ac8a-ecd034b532bf', '10000', 'không có ghi chú', ' ảnh sp', 'DEMO', 'DEMO', '-1','NULLWHS','4e4dd653-c6e8-4fca-b430-63d436ead8b7')"
+      }
+    }
+  },
+  {
+    "time": "Fri Oct 27 2023 01:38:51 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "04ait",
+    "content": {
+      "error": true,
+      "data": {
+        "code": "ER_FIELD_SPECIFIED_TWICE",
+        "errno": 1110,
+        "sqlMessage": "Column 'item_serial' specified twice",
+        "sqlState": "42000",
+        "index": 0,
+        "sql": "INSERT INTO `wh_items`(`item_uuid`, `item_key`, `item_name`, `item_namesub`, `item_part`, `item_serial`,`item_detail`, `cat_uuid`, `item_price`, `item_note`, `item_image`, `item_status`, `item_serial`, `item_amount`, `whs_uuid`, `man_uuid`) VALUES ('891c6fa4-2b43-4fb3-a0f9-21c00a2a5984', 'DM05DM', 'Sản phẩm tét', 'tên trên hoá đơnd', 'PARTM6', 'NULLSL', 'thông tin sản phẩm', '9652af7b-862d-4a06-ac8a-ecd034b532bf', '10000', 'không có ghi chú', ' ảnh sp', 'DEMO', 'DEMO', '-1','NULLWHS','4e4dd653-c6e8-4fca-b430-63d436ead8b7')"
+      }
+    }
   }
 ]
