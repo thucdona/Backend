@@ -2,14 +2,14 @@ const database = require('../../src/models/dbconnection')
 const Logs = require('../../src/middlewares/logs/server.log');
 const Create = require('../../src/middlewares/create');
 
-const createItem = async (item_key, item_name, item_namesub, item_part, item_sn, item_detail, cat_uuid, item_price, item_note, item_image, man_uuid) => {
+const createProduct = async (pt_name, pt_namesub, pt_part, pt_serial, pt_detail, cat_uuid,pt_note, pt_image, man_uuid ) => {
     try {
         return new Promise((resolve, reject) => {
 
-            const item_uuid = Create.uuid(); // tạo uuid
+            const pt_uuid = Create.uuid(); // tạo uuid
 
-            const sql = "INSERT INTO `wh_items`(`item_uuid`, `item_key`, `item_name`, `item_namesub`, `item_part`, `item_serial`,`item_detail`, `cat_uuid`, `item_price`, `item_note`, `item_image`, `item_status`, `item_amount`, `whs_uuid`, `man_uuid`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'DEMO', '-1','NULLWHS',?)";
-            database.ConnectDatabase.query(sql, [item_uuid, item_key, item_name, item_namesub, item_part,item_sn, item_detail, cat_uuid, item_price, item_note, item_image, man_uuid], (error, elements) => {
+            const sql = "INSERT INTO `wh_items`(`pt_uuid`, `pt_name`, `pt_namesub`, `pt_part`,`pt_serial`, `pt_detail`, `cat_uuid`,`pt_note`, `pt_image`, `man_uuid`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            database.ConnectDatabase.query(sql, [pt_uuid, pt_name, pt_namesub, pt_part,pt_serial, pt_detail, cat_uuid, pt_note, pt_image, man_uuid], (error, elements) => {
 
                 if (error) {
                     //viết log khi lỗi 
@@ -25,7 +25,7 @@ const createItem = async (item_key, item_name, item_namesub, item_part, item_sn,
 
     } catch (error) {
         //viết log khi lỗi
-        Logs.writeErrLog("SQLDB", "Lỗi hàm createItem - mô tả:" + error)
+        Logs.writeErrLog("SQLDB", "Lỗi hàm createProduct - mô tả:" + error)
         return false;
     }
 
@@ -33,24 +33,36 @@ const createItem = async (item_key, item_name, item_namesub, item_part, item_sn,
 
 ///lấy thông tin
 
-const getItem = async (key, value) => {
+const getProduct = async (key, value, all) => {
     try {
-        const sql = "SELECT * FROM `wh_items` WHERE ?? = ?";
+        if(!all){all = false}
+        var sql =""
+        if (all === true) {
+            sql = "SELECT * FROM `wh_items`";
+        }
+        else {
+            sql = "SELECT * FROM `wh_items` WHERE ?? = ?";
+        }
         const params = [key, value];
         
         return new Promise((resolve, reject) => {
             database.ConnectDatabase.query(sql, params, (error, elements) => {
                 if (error) {
                     // Viết log khi lỗi
-                    Logs.writeErrLog("SQLDB", "Lỗi hàm khi lấy dữ liệu getItem - mô tả:" + error);
+                    Logs.writeErrLog("SQLDB", "Lỗi hàm khi lấy dữ liệu getProduct - mô tả:" + error);
                     return reject({ 'error': true, data: error });
                 }
-                return resolve({ 'error': false, data: elements[0] });
+                if (all === true) {
+                    return resolve({ 'error': false, data: elements });
+                } else {
+                    return resolve({ 'error': false, data: elements[0] });
+                }
+                
             });
         });
     } catch (error) {
         // Viết log khi lỗi
-        Logs.writeErrLog("SQLDB", "Lỗi hàm getItem - mô tả:" + error);
+        Logs.writeErrLog("SQLDB", "Lỗi hàm getProduct - mô tả:" + error);
         return false;
     }
 }
@@ -98,16 +110,16 @@ const getItemListCon = async (key, value) => {
     }
 }
 
-const editItem = async (key, value, uuid) => {
+const editProduct = async (key, value, uuid) => {
     try {
-        const sql = "UPDATE `wh_items` SET ?? = ? WHERE `wh_items`.`item_uuid` = ?";
+        const sql = "UPDATE `wh_items` SET ?? = ? WHERE `wh_items`.`pt_uuid` = ?";
         const params = [key, value, uuid];
         
         return new Promise((resolve, reject) => {
             database.ConnectDatabase.query(sql, params, (error, elements) => {
                 if (error) {
                     // Viết log khi lỗi
-                    Logs.writeErrLog("SQLDB", "Lỗi hàm khi sửa dữ liệu editItem - mô tả:" + error);
+                    Logs.writeErrLog("SQLDB", "Lỗi hàm khi sửa dữ liệu editProduct - mô tả:" + error);
                     return reject({ 'error': true, data: error });
                 }
                 return resolve({ 'error': false, data: elements });
@@ -142,11 +154,34 @@ const deleteItem = async (uuid) => {
     }
 }
 
+const getItemData = async (key, value) => {
+    try {
+        const sql = "SELECT * FROM `wh_itemdata` WHERE ?? = ?";
+        const params = [key, value];
+        
+        return new Promise((resolve, reject) => {
+            database.ConnectDatabase.query(sql, params, (error, elements) => {
+                if (error) {
+                    // Viết log khi lỗi
+                    Logs.writeErrLog("SQLDB", "Lỗi hàm khi lấy dữ liệu getItemData - mô tả:" + error);
+                    return reject({ 'error': true, data: error });
+                }
+                return resolve({ 'error': false, data: elements[0] });
+            });
+        });
+    } catch (error) {
+        // Viết log khi lỗi
+        Logs.writeErrLog("SQLDB", "Lỗi hàm getItemData - mô tả:" + error);
+        return false;
+    }
+}
+
 module.exports = {
-    createItem,
-    getItem,
+    createProduct,
+    getProduct,
     getItemList,
-    editItem,
+    editProduct,
     getItemListCon,
-    deleteItem
+    deleteItem,
+    getItemData
 }

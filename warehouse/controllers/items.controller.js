@@ -10,11 +10,11 @@ const Variable = require('../../src/middlewares/variables');
 const mysql = require('mysql');
 const { json } = require("body-parser");
 //Tạo mới sản phẩm
-const createItem = async (req = request, res = response) => {
+const createProduct = async (req = request, res = response) => {
     //đây là hàm thêm mẫu sản phẩm vào kho, nó không có tác dụng thêm sản phẩm mới vào các khi, nó chỉ thêm phôi sản phẩm nên chỉ cần part và thông tin của sản phẩm => trạng thái sẽ là demo
     try {
         //đọc dữ liệu gửi lên
-        var { item_key, item_name, item_namesub, item_part, item_sn, item_detail, cat_uuid, item_price, item_note, item_image, man_uuid } = req.body;
+        var { pt_name, pt_namesub, pt_part, pt_serial, pt_detail, cat_uuid, pt_note, pt_image, man_uuid } = req.body;
         //lấy key trong header
         const accessTokenFromHeader = req.headers.x_authorization;
         //Kiểm tra xem người dùng đăng nhập hay chưa
@@ -24,7 +24,7 @@ const createItem = async (req = request, res = response) => {
         }
         const user_uuid = isAuth.data.data[0].user_key
         //kiểm tra có dữ liệu nào bị bỏ trống hay không
-        const requiredFields = ['item_key', 'item_name', 'item_namesub', 'item_part','item_sn', 'item_detail', 'cat_uuid', 'item_price', 'item_note', 'item_image', 'man_uuid'];
+        const requiredFields = ['pt_name', 'pt_namesub', 'pt_part', 'pt_serial', 'pt_detail', 'cat_uuid', 'pt_note', 'pt_image', 'man_uuid'];
         const missingFields = [];
         requiredFields.forEach(field => {
             if (!req.body[field]) {
@@ -38,15 +38,16 @@ const createItem = async (req = request, res = response) => {
                 data: missingFields.join(', ')
             });
         }
+        if (!pt_image) {
+            pt_image = "noimage"
+        }
         //kiểm tra xem có cái nào dài quá hay không
-        item_key = item_key + "DM";
-        if (Func.isStringTooLong(item_key, 100) ||
-            Func.isStringTooLong(item_name, 100) ||
-            Func.isStringTooLong(item_namesub, 100) ||
-            Func.isStringTooLong(item_part, 100) ||
+        if (
+            Func.isStringTooLong(pt_name, 100) ||
+            Func.isStringTooLong(pt_namesub, 100) ||
+            Func.isStringTooLong(pt_part, 100) ||
             Func.isStringTooLong(cat_uuid, 100) ||
-            Func.isStringTooLong(item_price, 100) ||
-            Func.isStringTooLong(item_image, 255) ||
+            Func.isStringTooLong(pt_image, 255) ||
             Func.isStringTooLong(man_uuid, 100)) {
             return res.status(400).json({
                 err: true,
@@ -56,12 +57,12 @@ const createItem = async (req = request, res = response) => {
         }
 
         //lấy thông tin từ csdl xem đã tồn tại hay chưa
-        const itemGetKey = await itemModel.getItem("item_key", item_key);
-        if (itemGetKey.data) {
+        const ptGetKey = await itemModel.getProduct("pt_part", pt_part);
+        if (ptGetKey.data) {
             return res.status(400).json({
                 err: true,
-                msg: "Mã của Sản phẩm đã tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
-                data: "error_unique_key"
+                msg: "Đã tồn tại một sản phẩm mẫu tương tự trong CSDL",
+                data: "error_unique_part"
             })
         }
 
@@ -83,20 +84,10 @@ const createItem = async (req = request, res = response) => {
                 data: "error_null_man"
             })
         }
-
-        //kiểm tra xem part đã tồn tại hay chưa
-        const itemGetPart = await itemModel.getItem("item_part", item_part);
-        if (itemGetPart.data) {
-            return res.status(400).json({
-                err: true,
-                msg: "Model của Sản phẩm đã tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
-                data: "error_unique_key"
-            })
-        }
         //có 2 loại sản phẩm 1 là duy nhất tức là part giống nhau và Serial khác nhau, mấy món này công thức add cũng khác nhau - nên quy định hàng này là add new tức là thêm mẫu mã cho sản phẩm nên không cần nhập serial, chỉ cần kiểm xem model có tồn tại hay chưa thôi
 
         //thêm hàng vào csdl
-        const createItem = await itemModel.createItem(item_key, item_name, item_namesub, item_part, item_sn, item_detail, cat_uuid, item_price, item_note, item_image, man_uuid)
+        const createItem = await itemModel.createProduct(pt_name, pt_namesub, pt_part, pt_serial, pt_detail, cat_uuid, pt_note, pt_image, man_uuid )
         if (createItem.err) {
             return res.status(500).json({
                 err: true,
@@ -106,7 +97,7 @@ const createItem = async (req = request, res = response) => {
         }
 
         //lấy ngược lại từ CSDL sau đó trả về
-        const checkItem = await itemModel.getItem("item_key", item_key);
+        const checkItem = await itemModel.getProduct("pt_part", pt_part);
         if (checkItem.err) {
             return res.status(500).json({
                 err: true,
@@ -114,7 +105,7 @@ const createItem = async (req = request, res = response) => {
                 data: checkItem.data
             })
         }
-        logs.writeLogs(user_uuid, 'addItem', checkItem.data)
+        logs.writeLogs(user_uuid, 'createProduct', checkItem.data)
         return res.status(200).json({
             err: true,
             msg: "Thêm mới mẫu sản phẩm thành công",
@@ -132,10 +123,10 @@ const createItem = async (req = request, res = response) => {
     }
 }
 
-const editItem = async (req = request, res = response) => {
+const editProduct= async (req = request, res = response) => {
     try {
         //đọc dữ liệu gửi lên
-        var { item_name, item_namesub, item_part, item_detail, cat_uuid, item_price, item_note, item_image, item_uuid, man_uuid } = req.body;
+        var { pt_uuid, pt_name, pt_namesub, pt_part, pt_detail, cat_uuid, pt_note, pt_image, man_uuid } = req.body;
         //lấy key trong header
         const accessTokenFromHeader = req.headers.x_authorization;
         const isAuth = await Auth.isAuth(accessTokenFromHeader, "edit_item");
@@ -145,7 +136,7 @@ const editItem = async (req = request, res = response) => {
         //thông tin người dùng
         const user_uuid = isAuth.data.data[0].user_key
         //kiểm tra có dữ liệu nào bị bỏ trống hay không
-        const requiredFields = ['item_name', 'item_namesub', 'item_part', 'item_detail', 'cat_uuid', 'item_price', 'item_note', 'item_image', 'man_uuid'];
+        const requiredFields = ['pt_uuid', 'pt_name', 'pt_namesub', 'pt_part', 'pt_detail', 'cat_uuid', 'pt_note', 'pt_image', 'man_uuid'];//kiểm tra hết để chắc chắn máy khách luôn gửi lên đủ
         const missingFields = [];
         requiredFields.forEach(field => {
             if (!req.body[field]) {
@@ -167,12 +158,11 @@ const editItem = async (req = request, res = response) => {
                 errorFields.push(fieldName);
             }
         }
-        checkField('item_name', item_name, 150);
-        checkField('item_namesub', item_namesub, 150);
-        checkField('item_part', item_part, 150);
+        checkField('pt_name', pt_name, 150);
+        checkField('pt_namesub', pt_namesub, 150);
+        checkField('pt_part', pt_part, 150);
         checkField('cat_uuid', cat_uuid, 150);
-        checkField('item_price', item_price, 150);
-        checkField('item_uuid', item_uuid, 150);
+        checkField('pt_uuid', pt_uuid, 150);
         if (errorFields.length > 0) {
             return res.status(400).json({
                 err: true,
@@ -181,9 +171,9 @@ const editItem = async (req = request, res = response) => {
             });
         }
         //kiểm tra xem cái item đang sửa có đang tồn tại hay không
-        const itemGetuuid = await itemModel.getItem("item_uuid", item_uuid);
+        const productGetuuid = await itemModel.getProduct("pt_uuid", pt_uuid);
         //nếu đang không tồn tại => trả về lỗi
-        if (!itemGetuuid.data) {
+        if (!productGetuuid.data) {
             return res.status(400).json({
                 err: true,
                 msg: "Sản phẩm không tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
@@ -209,33 +199,32 @@ const editItem = async (req = request, res = response) => {
                 data: "error_null_man"
             })
         }
-        const thisItem = itemGetuuid.data
+        const thisProduct = productGetuuid.data
         //đây là sp demo nên không cho phép sửa cái qq sn
-        const newItem = {
-            'item_name': item_name,
-            'item_namesub': item_namesub,
-            'item_part': item_part,
-            'item_detail': item_detail,
+        const newProduct = {
+            'pt_name': pt_name,
+            'pt_namesub': pt_namesub,
+            'pt_part': pt_part,
+            'pt_detail': pt_detail,
             'cat_uuid': cat_uuid,
-            'item_price': item_price,
-            'item_note': item_note,
-            'item_image': item_image,
+            'pt_note': pt_note,
+            'pt_image': pt_image,
             'man_uuid': man_uuid
         };
 
         //lấy allItem
-        var allItem = await itemModel.getItemList()
-        allItem = allItem.data;
+        var allPrduct = await itemModel.getProduct('1','1', true)
+        allPrduct = allPrduct.data;
         // 1. So sánh thisItem và newItem
         let diffKeys = [];
         // Lặp qua các keys trong thisItem
-        Object.keys(thisItem).forEach(async (key) => {
+        Object.keys(thisProduct).forEach(async (key) => {
             // Nếu key không tồn tại trong newItem thì bỏ qua
-            if (!newItem[key]) return;
+            if (!newProduct[key]) return;
             // So sánh giá trị, nếu khác nhau thêm vào mảng diff
             //nếu có kiểm tra xem có tồn tại hay không
-            if (thisItem[key] !== newItem[key]) {
-                diffKeys.push({ [key]: newItem[key] });
+            if (thisProduct[key] !== newProduct[key]) {
+                diffKeys.push({ [key]: newProduct[key] });
             }
         });
         //nếu không có cái nào thay đổi thì trả về lỗi luôn
@@ -248,8 +237,8 @@ const editItem = async (req = request, res = response) => {
         }
         //Tìm xem cat uuid có thay đổi hay không
         // Hàm để tìm các giá trị trùng nhau
-        const duplicates = diffKeys.filter(diffKeyItem => allItem.some(allItemItem =>
-            Object.keys(diffKeyItem).every(key => allItemItem[key] === diffKeyItem[key])
+        const duplicates = diffKeys.filter(diffKeyProduct => allPrduct.some(allPrductPt =>
+            Object.keys(diffKeyProduct).every(key => allPrductPt[key] === diffKeyProduct[key])
         ));
         //nếu có giá trị trùng nhau
         //trả về lỗi
@@ -262,17 +251,17 @@ const editItem = async (req = request, res = response) => {
         }
         //nếu không có cái nào trùng
         const diffKeysObject = {};
-        diffKeys.forEach(async (diffKeyItem) => {
-            Object.keys(diffKeyItem).forEach(async (key) => {
-                diffKeysObject[key] = diffKeyItem[key];
+        diffKeys.forEach(async (diffKeyProduct) => {
+            Object.keys(diffKeyProduct).forEach(async (key) => {
+                diffKeysObject[key] = diffKeyProduct[key];
             });
         });
 
         ///gửi vào CSDL
         var _err = false
         Object.keys(diffKeysObject).forEach(async (key) => {
-            var editItem = await itemModel.editItem(key, diffKeysObject[key], item_uuid)
-            if (editItem.err != true) {
+            var editProduct = await itemModel.editProduct(key, diffKeysObject[key], pt_uuid)
+            if (editProduct.err != true) {
                 _err = true;
             }
         })
@@ -280,20 +269,20 @@ const editItem = async (req = request, res = response) => {
             return res.status(500).json({
                 err: false,
                 msg: "Có lỗi trong quá trình cập nhật Sản phẩm",
-                data: "edit_item_err"
+                data: "edit_product_err"
             })
         }
         const content = {
-            oldItem: thisItem,
-            updateItem: diffKeysObject
+            oldProduct: thisProduct,
+            updateProduct: diffKeysObject
         }
         //thêm vào file log thông tin cập nhật để sau này còn tra lại
-        logs.writeLogs(user_uuid, "updateItem", content)
+        logs.writeLogs(user_uuid, "updateProduct", content)
         //Trả về OK
         return res.status(200).json({
             err: false,
             msg: "Chỉnh sửa Sản phẩm thành công",
-            data: "edit_item_success"
+            data: "edit_product_success"
         })
 
     } catch (error) {
@@ -313,7 +302,7 @@ const importItem = async (req = request, res = response) => {
     //khi nhập sản phẩm thì có 2 dạng 1 là thêm số lượng với những item không có sn và thêm vào kho 1 cái đối với mấy cái có sn
     try {
         // đọc dữ liệu gửi lên
-        var { item_uuid, item_price, item_note, item_image, item_amount, item_serial } = req.body;
+        var { pt_uuid, it_price, it_note, it_image, it_amount, it_serial, it_serial } = req.body;
         //lấy key trong header
         const accessTokenFromHeader = req.headers.x_authorization;
         //Kiểm tra xem người dùng đăng nhập hay chưa
@@ -321,6 +310,7 @@ const importItem = async (req = request, res = response) => {
         if (isAuth.err === true) {
             return res.status(400).json(isAuth)
         }
+        //lấy thông tin người dùng
         const user_uuid = isAuth.data.data[0].user_key
         //kiểm tra có để trống cái nào hay không
         function checkFields(fields) {
@@ -330,7 +320,7 @@ const importItem = async (req = request, res = response) => {
                     errorFields.push(field);
                 }
             });
-        
+
             if (errorFields.length > 0) {
                 return res.status(400).json({
                     err: true,
@@ -339,12 +329,12 @@ const importItem = async (req = request, res = response) => {
                 });
             }
         }
-        const requiredFields = ['item_uuid', 'item_price', 'item_note', 'item_image', 'item_amount', 'item_serial'];
+        const requiredFields = ['pt_uuid', 'it_price', 'it_note', 'it_image', 'it_amount', 'it_serial', 'it_serial'];
         checkFields(requiredFields);
 
-        //Kiểm tra uuid sản phẩm tồn tại chưa (check-F12)
-        const itemGetuuid = itemModel.getItem('item_uuid', item_uuid);
-        if (!itemGetuuid.data) {
+        //Kiểm tra xem sản phẩm đã tồn tại trên CSDL chưa tránh người dùng nhập linh ta linh tinh
+        const productGetuuid = itemModel.getProduct('pt_uuid', pt_uuid);
+        if (!productGetuuid .data) {
             return res.status(400).json({
                 err: true,
                 msg: "Sản phẩm không tồn tại trong cơ sở dữ liệu, vui lòng kiểm tra lại",
@@ -352,18 +342,21 @@ const importItem = async (req = request, res = response) => {
             })
         }
 
-        //nếu có tồn tại kiểm tra xem là loại tăng số lượng hay tăng số sản phẩm
-        const thisItem = itemGetuuid.data;
-        
+        //nếu có tồn tại kiểm tra xem có cần kiểm soát theo Serial hay không
+        const thisProduct = productGetuuid.data;
+
         //kiểm tra xem user nhập là NULLSN hay SN thường
-        if (item_serial === "NULLSN") {
+        if (thisProduct.pt_serial === 0) {
             //kiểm tra xem sản phẩm đó đã từng nhập trong kho hay chưa
+            //const checkSN = await itemModel.getItemData('it_serial', "NULLSN");
+
         }
     } catch (error) {
         console.log(error);
     }
 }
 module.exports = {
-    createItem,
-    editItem
+    createProduct,
+    editProduct,
+    importItem
 }

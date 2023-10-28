@@ -158,5 +158,145 @@
         "sql": "INSERT INTO `wh_items`(`item_uuid`, `item_key`, `item_name`, `item_namesub`, `item_part`, `item_serial`,`item_detail`, `cat_uuid`, `item_price`, `item_note`, `item_image`, `item_status`, `item_serial`, `item_amount`, `whs_uuid`, `man_uuid`) VALUES ('891c6fa4-2b43-4fb3-a0f9-21c00a2a5984', 'DM05DM', 'Sản phẩm tét', 'tên trên hoá đơnd', 'PARTM6', 'NULLSL', 'thông tin sản phẩm', '9652af7b-862d-4a06-ac8a-ecd034b532bf', '10000', 'không có ghi chú', ' ảnh sp', 'DEMO', 'DEMO', '-1','NULLWHS','4e4dd653-c6e8-4fca-b430-63d436ead8b7')"
       }
     }
+  },
+  {
+    "time": "Sun Oct 29 2023 05:31:20 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "04ait",
+    "content": {}
+  },
+  {
+    "time": "Sun Oct 29 2023 05:33:39 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "04ait",
+    "content": {
+      "error": true,
+      "data": {
+        "code": "ER_BAD_FIELD_ERROR",
+        "errno": 1054,
+        "sqlMessage": "Unknown column 'pt_part' in 'where clause'",
+        "sqlState": "42S22",
+        "index": 0,
+        "sql": "SELECT * FROM `wh_items` WHERE `pt_part` = 'PARTM6'"
+      }
+    }
+  },
+  {
+    "time": "Sun Oct 29 2023 05:34:37 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "04ait",
+    "content": {
+      "error": true,
+      "data": {
+        "code": "ER_BAD_FIELD_ERROR",
+        "errno": 1054,
+        "sqlMessage": "Unknown column 'item_note' in 'field list'",
+        "sqlState": "42S22",
+        "index": 0,
+        "sql": "INSERT INTO `wh_items`(`pt_uuid`, `pt_name`, `pt_namesub`, `pt_part`, `pt_detail`, `cat_uuid`,`item_note`, `pt_image`, `whs_uuid`, `man_uuid`) VALUES ('7c81d4cf-ae13-4734-8158-feafed43b904', 'Sản phẩm tét', 'tên trên hoá đơnd', 'PARTM9', '12334', 'thông tin sản phẩm', '9652af7b-862d-4a06-ac8a-ecd034b532bf', NULL, ' ảnh sp', '4e4dd653-c6e8-4fca-b430-63d436ead8b7')"
+      }
+    }
+  },
+  {
+    "time": "Sun Oct 29 2023 05:35:16 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "04ait",
+    "content": {
+      "error": true,
+      "data": {
+        "code": "ER_BAD_NULL_ERROR",
+        "errno": 1048,
+        "sqlMessage": "Column 'pt_image' cannot be null",
+        "sqlState": "23000",
+        "index": 0,
+        "sql": "INSERT INTO `wh_items`(`pt_uuid`, `pt_name`, `pt_namesub`, `pt_part`, `pt_detail`, `cat_uuid`,`pt_note`, `pt_image`, `whs_uuid`, `man_uuid`) VALUES ('fc6f95d8-2bcc-4816-ad71-c37ccb515ef4', 'Sản phẩm tét', 'tên trên hoá đơnd', 'PARTM9', '12334', 'thông tin sản phẩm', '9652af7b-862d-4a06-ac8a-ecd034b532bf', NULL, ' ảnh sp', '4e4dd653-c6e8-4fca-b430-63d436ead8b7')"
+      }
+    }
+  },
+  {
+    "time": "Sun Oct 29 2023 05:35:19 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "04ait",
+    "content": {
+      "error": true,
+      "data": {
+        "code": "ER_BAD_NULL_ERROR",
+        "errno": 1048,
+        "sqlMessage": "Column 'pt_image' cannot be null",
+        "sqlState": "23000",
+        "index": 0,
+        "sql": "INSERT INTO `wh_items`(`pt_uuid`, `pt_name`, `pt_namesub`, `pt_part`, `pt_detail`, `cat_uuid`,`pt_note`, `pt_image`, `whs_uuid`, `man_uuid`) VALUES ('aa3f5b62-1d07-4bb4-9d23-ca53005d30ff', 'Sản phẩm tét', 'tên trên hoá đơnd', 'PARTM9', '12334', 'thông tin sản phẩm', '9652af7b-862d-4a06-ac8a-ecd034b532bf', NULL, ' ảnh sp', '4e4dd653-c6e8-4fca-b430-63d436ead8b7')"
+      }
+    }
+  },
+  {
+    "time": "Sun Oct 29 2023 05:36:48 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "04ait",
+    "content": {
+      "error": true,
+      "data": {
+        "code": "ER_BAD_NULL_ERROR",
+        "errno": 1048,
+        "sqlMessage": "Column 'pt_image' cannot be null",
+        "sqlState": "23000",
+        "index": 0,
+        "sql": "INSERT INTO `wh_items`(`pt_uuid`, `pt_name`, `pt_namesub`, `pt_part`, `pt_detail`, `cat_uuid`,`pt_note`, `pt_image`, `whs_uuid`, `man_uuid`) VALUES ('7bc0dad0-1d3d-49ec-a619-e8761731bb85', 'Sản phẩm tét', 'tên trên hoá đơnd', 'PARTM9', '12334', 'thông tin sản phẩm', '9652af7b-862d-4a06-ac8a-ecd034b532bf', NULL, ' ảnh sp', '4e4dd653-c6e8-4fca-b430-63d436ead8b7')"
+      }
+    }
+  },
+  {
+    "time": "Sun Oct 29 2023 05:36:49 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "04ait",
+    "content": {
+      "error": true,
+      "data": {
+        "code": "ER_BAD_NULL_ERROR",
+        "errno": 1048,
+        "sqlMessage": "Column 'pt_image' cannot be null",
+        "sqlState": "23000",
+        "index": 0,
+        "sql": "INSERT INTO `wh_items`(`pt_uuid`, `pt_name`, `pt_namesub`, `pt_part`, `pt_detail`, `cat_uuid`,`pt_note`, `pt_image`, `whs_uuid`, `man_uuid`) VALUES ('5d6512f5-6046-4553-aaa3-37aea6c8bc43', 'Sản phẩm tét', 'tên trên hoá đơnd', 'PARTM9', '12334', 'thông tin sản phẩm', '9652af7b-862d-4a06-ac8a-ecd034b532bf', NULL, ' ảnh sp', '4e4dd653-c6e8-4fca-b430-63d436ead8b7')"
+      }
+    }
+  },
+  {
+    "time": "Sun Oct 29 2023 05:39:18 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "04ait",
+    "content": {}
+  },
+  {
+    "time": "Sun Oct 29 2023 05:40:22 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "04ait",
+    "content": {}
+  },
+  {
+    "time": "Sun Oct 29 2023 05:44:40 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "04ait",
+    "content": {
+      "error": true,
+      "data": {
+        "code": "ER_BAD_FIELD_ERROR",
+        "errno": 1054,
+        "sqlMessage": "Unknown column 'whs_uuid' in 'field list'",
+        "sqlState": "42S22",
+        "index": 0,
+        "sql": "INSERT INTO `wh_items`(`pt_uuid`, `pt_name`, `pt_namesub`, `pt_part`, `pt_detail`, `cat_uuid`,`pt_note`, `pt_image`, `whs_uuid`, `man_uuid`) VALUES ('70cf58c1-aa78-4120-a96c-fe93d6c4cb56', 'Sản phẩm tét', 'tên trên hoá đơnd', 'PARTM10', '12334', 'thông tin sản phẩm', '9652af7b-862d-4a06-ac8a-ecd034b532bf', 'không có ghi chú', ' ảnh sp', '4e4dd653-c6e8-4fca-b430-63d436ead8b7')"
+      }
+    }
+  },
+  {
+    "time": "Sun Oct 29 2023 06:07:25 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "01eia",
+    "content": "{}"
+  },
+  {
+    "time": "Sun Oct 29 2023 06:08:11 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "01eia",
+    "content": "{}"
+  },
+  {
+    "time": "Sun Oct 29 2023 06:09:10 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "01eia",
+    "content": "{}"
+  },
+  {
+    "time": "Sun Oct 29 2023 06:09:34 GMT+0700 (Giờ Đông Dương)",
+    "errcode": "01eia",
+    "content": "{}"
   }
 ]

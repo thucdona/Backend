@@ -328,5 +328,66 @@
       "item_changedate": "",
       "man_uuid": "4e4dd653-c6e8-4fca-b430-63d436ead8b7"
     }
+  },
+  {
+    "time": "Sun Oct 29 2023 05:40:53 GMT+0700 (Giờ Đông Dương)",
+    "user_uuid": "0fb2c987-dc79-488b-a7ff-9c6556d85f91",
+    "action": "createProduct",
+    "info": {
+      "id": 4,
+      "pt_uuid": "14ffa8d1-6721-450b-9077-955503e1aa08",
+      "pt_name": "Sản phẩm tét",
+      "pt_namesub": "tên trên hoá đơnd",
+      "pt_part": "PARTM9",
+      "pt_serial": "",
+      "pt_detail": "12334",
+      "cat_uuid": "thông tin sản phẩm",
+      "whs_uuid": " ảnh sp",
+      "pt_note": "9652af7b-862d-4a06-ac8a-ecd034b532bf",
+      "pt_image": "không có ghi chú",
+      "man_uuid": "4e4dd653-c6e8-4fca-b430-63d436ead8b7"
+    }
+  },
+  {
+    "time": "Sun Oct 29 2023 05:47:48 GMT+0700 (Giờ Đông Dương)",
+    "user_uuid": "0fb2c987-dc79-488b-a7ff-9c6556d85f91",
+    "action": "createProduct",
+    "info": {
+      "id": 5,
+      "pt_uuid": "522fe9f1-8b45-4dc6-b973-03fc77c71004",
+      "pt_name": "Sản phẩm tét",
+      "pt_namesub": "tên trên hoá đơnd",
+      "pt_part": "PARTM10",
+      "pt_serial": "12334",
+      "pt_detail": "thông tin sản phẩm",
+      "cat_uuid": "9652af7b-862d-4a06-ac8a-ecd034b532bf",
+      "pt_note": "không có ghi chú",
+      "pt_image": " ảnh sp",
+      "man_uuid": "4e4dd653-c6e8-4fca-b430-63d436ead8b7"
+    }
+  },
+  {
+    "time": "Sun Oct 29 2023 06:12:13 GMT+0700 (Giờ Đông Dương)",
+    "user_uuid": "0fb2c987-dc79-488b-a7ff-9c6556d85f91",
+    "action": "updateProduct",
+    "info": {
+      "oldProduct": {
+        "id": 1,
+        "pt_uuid": "3cd66d0b-f2a3-48fb-b74c-42f009b85bfc",
+        "pt_name": "Sản phẩm số 01",
+        "pt_namesub": "tên trên hoá đơn",
+        "pt_part": "PARTM",
+        "pt_serial": "1",
+        "pt_detail": "thông tin sản phẩm",
+        "cat_uuid": "9652af7b-862d-4a06-ac8a-ecd034b532bf",
+        "pt_note": "không có ghi chú",
+        "pt_image": " ảnh sp",
+        "man_uuid": "4e4dd653-c6e8-4fca-b430-63d436ead8b7"
+      },
+      "updateProduct": {
+        "pt_name": "Sản phẩm tét 01",
+        "pt_part": "PARTM4"
+      }
+    }
   }
 ]
